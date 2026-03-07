@@ -1,0 +1,16 @@
+﻿<Window x:Class="TheMagicOfPerfumes.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="The Magic of Perfumes"
+        Height="720" Width="1280"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- Navigation sidebar will go here later -->
+        <!-- Main content area will go here later -->
+        <TextBlock Text="✅ App is running with DI!"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="24"/>
+    </Grid>
+</Window>

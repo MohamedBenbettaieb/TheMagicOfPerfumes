@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using TheMagicOfPerfumes.Data;
 using TheMagicOfPerfumes.ViewModels;
 using TheMagicOfPerfumes.Views;
 
@@ -26,6 +28,10 @@ namespace TheMagicOfPerfumes
 
         private void ConfigureServices(IServiceCollection services)
         {
+            // --- Database ---
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite("Data Source=TheMagicOfPerfumes.db"));
+
             // --- ViewModels ---
             services.AddTransient<MainViewModel>();
 

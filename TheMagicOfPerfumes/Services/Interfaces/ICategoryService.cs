@@ -9,4 +9,6 @@ public interface ICategoryService
     Task AddAsync(Category category);
     Task UpdateAsync(Category category);
     Task DeleteAsync(Category category);
+    Task<bool> ExistsWithNameAsync(string name, int? excludeId = null);
+
 }

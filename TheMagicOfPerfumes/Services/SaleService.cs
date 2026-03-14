@@ -34,6 +34,9 @@ public class SaleService : Repository<Sale>, ISaleService
     public async Task CreateSaleAsync(Sale sale, IEnumerable<SaleItem> items)
     {
         sale.SaleItems = items.ToList();
+        var saleItems = items?.ToList() ?? new List<SaleItem>();
+        sale.SaleItems = saleItems;
+        sale.TotalAmount = saleItems.Sum(si => si.Subtotal);
         await AddAsync(sale);
     }
 }

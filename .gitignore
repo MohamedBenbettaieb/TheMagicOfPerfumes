@@ -69,3 +69,8 @@ $RECYCLE.BIN/
 
 # Project specific (adjust as needed)
 !**/packages/build/
+
+# SQLite database 
+*.db
+*.db-shm
+*.db-wal

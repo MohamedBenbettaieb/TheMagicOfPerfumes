@@ -19,26 +19,30 @@ namespace TheMagicOfPerfumes.Data
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
-                .HasForeignKey(p => p.CategoryId);
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Sale → Customer (optional)
             modelBuilder.Entity<Sale>()
                 .HasOne(s => s.Customer)
                 .WithMany(c => c.Sales)
                 .HasForeignKey(s => s.CustomerId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // SaleItem → Sale
             modelBuilder.Entity<SaleItem>()
                 .HasOne(si => si.Sale)
                 .WithMany(s => s.SaleItems)
-                .HasForeignKey(si => si.SaleId);
+                .HasForeignKey(si => si.SaleId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // SaleItem → Product
             modelBuilder.Entity<SaleItem>()
                 .HasOne(si => si.Product)
                 .WithMany()
-                .HasForeignKey(si => si.ProductId);
+                .HasForeignKey(si => si.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Price precision — important for decimal in SQLite
             modelBuilder.Entity<Product>()

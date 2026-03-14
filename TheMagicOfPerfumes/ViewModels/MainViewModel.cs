@@ -2,61 +2,70 @@
 using CommunityToolkit.Mvvm.Input;
 using TheMagicOfPerfumes.Services.Interfaces;
 using TheMagicOfPerfumes.ViewModels.Base;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TheMagicOfPerfumes.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    private readonly ICategoryService _categoryService;
-    private readonly IProductService _productService;
-    private readonly ICustomerService _customerService;
-    private readonly ISaleService _saleService;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private IServiceScope? _currentScope;
 
     [ObservableProperty]
     private ViewModelBase _currentViewModel = null!;
 
-    public MainViewModel(
-        ICategoryService categoryService,
-        IProductService productService,
-        ICustomerService customerService,
-        ISaleService saleService)
+    public MainViewModel(IServiceScopeFactory scopeFactory)
     {
-        _categoryService = categoryService;
-        _productService = productService;
-        _customerService = customerService;
-        _saleService = saleService;
+        _scopeFactory = scopeFactory;
 
         // Default screen on startup
         NavigateToDashboard();
     }
 
+    private void SetCurrentViewModel(ViewModelBase newViewModel, IServiceScope? newScope)
+    {
+        // Dispose the previous scope (and its scoped services) when navigating away.
+        _currentScope?.Dispose();
+        _currentScope = newScope;
+        CurrentViewModel = newViewModel;
+    }
+
     [RelayCommand]
     private void NavigateToDashboard()
     {
-        CurrentViewModel = new DashboardViewModel();
+        // Dashboard does not require EF‑backed scoped services, so no scope is needed.
+        SetCurrentViewModel(new DashboardViewModel(), null);
     }
 
     [RelayCommand]
     private void NavigateToCategories()
     {
-        CurrentViewModel = new CategoryViewModel(_categoryService);
+        var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<CategoryViewModel>();
+        SetCurrentViewModel(viewModel, scope);
     }
 
     [RelayCommand]
     private void NavigateToProducts()
     {
-        CurrentViewModel = new ProductViewModel(_productService, _categoryService);
+        var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<ProductViewModel>();
+        SetCurrentViewModel(viewModel, scope);
     }
 
     [RelayCommand]
     private void NavigateToCustomers()
     {
-        CurrentViewModel = new CustomerViewModel(_customerService);
+        var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<CustomerViewModel>();
+        SetCurrentViewModel(viewModel, scope);
     }
 
     [RelayCommand]
     private void NavigateToSales()
     {
-        CurrentViewModel = new SaleViewModel(_saleService, _productService, _customerService);
+        var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<SaleViewModel>();
+        SetCurrentViewModel(viewModel, scope);
     }
 }

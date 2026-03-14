@@ -21,7 +21,12 @@ namespace TheMagicOfPerfumes
             ConfigureServices(services);
             Services = services.BuildServiceProvider();
 
-            // 2. Resolve MainWindow from DI and show it
+            // 2. Apply migrations automatically on every startup
+            using var scope = Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.Migrate();
+
+            // 3. Resolve MainWindow from DI and show it
             var mainWindow = Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }

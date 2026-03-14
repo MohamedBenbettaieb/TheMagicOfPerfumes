@@ -1,10 +1,14 @@
-﻿namespace TheMagicOfPerfumes.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TheMagicOfPerfumes.Models
 {
     public class Sale
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
-        public decimal TotalAmount { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
+
+        [NotMapped]
+        public decimal TotalAmount => SaleItems?.Sum(item => item.Subtotal) ?? 0m;
 
         // Foreign key (nullable — a sale can be anonymous)
         public int? CustomerId { get; set; }

@@ -9,7 +9,7 @@ public class ProductService : Repository<Product>, IProductService
 {
     public ProductService(AppDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public new async Task<IEnumerable<Product>> GetAllAsync()
         => await _context.Products
             .Include(p => p.Category)
             .ToListAsync();

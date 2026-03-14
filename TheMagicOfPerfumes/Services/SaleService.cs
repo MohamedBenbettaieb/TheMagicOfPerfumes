@@ -9,7 +9,7 @@ public class SaleService : Repository<Sale>, ISaleService
 {
     public SaleService(AppDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<Sale>> GetAllAsync()
+    public new async Task<IEnumerable<Sale>> GetAllAsync()
         => await _context.Sales
             .Include(s => s.Customer)
             .Include(s => s.SaleItems)

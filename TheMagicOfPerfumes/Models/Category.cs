@@ -1,11 +1,10 @@
-﻿namespace TheMagicOfPerfumes.Models
-{
-    public class Category
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+﻿namespace TheMagicOfPerfumes.Models;
 
-        // Navigation property
-        public ICollection<Product> Products { get; set; } = new List<Product>();
-    }
+public class Category
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    // Navigation property
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

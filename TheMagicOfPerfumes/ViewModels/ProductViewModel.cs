@@ -36,15 +36,8 @@ public partial class ProductViewModel : ViewModelBase
     private string _newProductDescription = string.Empty;
 
     [ObservableProperty]
-    private string _newProductImagePath = string.Empty;
-
-    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
     private decimal? _newProductPrice;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private int _newProductStock;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
@@ -195,7 +188,6 @@ public partial class ProductViewModel : ViewModelBase
         NewProductName = string.Empty;
         NewProductDescription = string.Empty;
         NewProductPrice = null;
-        NewProductImagePath = string.Empty;
         NewProductCategory = null;
         IsEditing = false;
         ErrorMessage = string.Empty;

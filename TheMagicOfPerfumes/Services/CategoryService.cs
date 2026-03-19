@@ -9,7 +9,11 @@ public class CategoryService : Repository<Category>, ICategoryService
 {
     public CategoryService(AppDbContext context) : base(context) { }
     public async Task<bool> ExistsWithNameAsync(string name, int? excludeId = null)
-            => await _context.Categories
-                .AnyAsync(c => c.Name.ToLower().Trim() == name.ToLower().Trim()
-                            && (!excludeId.HasValue || c.Id != excludeId.Value));
+    {
+        var normalizedName = name?.Trim();
+
+        return await _context.Categories
+            .AnyAsync(c => EF.Functions.Collate(c.Name, "NOCASE") == normalizedName
+            && (!excludeId.HasValue || c.Id != excludeId.Value));
+    }
 }

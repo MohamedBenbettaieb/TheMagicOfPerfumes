@@ -107,7 +107,7 @@
                                Margin="0,0,0,15"/>
 
                     <TextBlock Text="{Binding CategoryToDelete.Name, 
-                                 StringFormat='Are you sure you want to delete \&#34;\{0\}\&#34;?'}"
+                                 StringFormat='Are you sure you want to delete &quot;{0}&quot;?'}"
                                TextWrapping="Wrap"
                                HorizontalAlignment="Center"
                                Margin="0,0,0,20"/>

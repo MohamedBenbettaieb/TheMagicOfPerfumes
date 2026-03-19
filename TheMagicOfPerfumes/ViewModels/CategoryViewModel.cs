@@ -41,48 +41,61 @@ namespace TheMagicOfPerfumes.ViewModels
 
         private async Task LoadCategoriesAsync()
         {
-            var categories = await _categoryService.GetAllAsync();
-            Categories = new ObservableCollection<Category>(categories);
+            try
+            {
+                var categories = await _categoryService.GetAllAsync();
+                Categories = new ObservableCollection<Category>(categories);
+                ErrorMessage = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error loading categories: {ex.Message}";
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task SaveAsync()
         {
-            // Trim the category name
-            var trimmedName = NewCategoryName.Trim();
-
-            // Check if trimmed name is empty
-            if (string.IsNullOrWhiteSpace(trimmedName))
+            try
             {
-                ErrorMessage = "Category name cannot be empty.";
-                return;
+                var trimmedName = NewCategoryName.Trim();
+
+                if (string.IsNullOrWhiteSpace(trimmedName))
+                {
+                    ErrorMessage = "Category name cannot be empty.";
+                    return;
+                }
+
+                int? excludeId = IsEditing ? SelectedCategory?.Id : null;
+                var exists = await _categoryService.ExistsWithNameAsync(trimmedName, excludeId);
+
+                if (exists)
+                {
+                    ErrorMessage = "A category with this name already exists.";
+                    return;
+                }
+
+                if (IsEditing && SelectedCategory != null)
+                {
+                    SelectedCategory.Name = trimmedName;
+                    await _categoryService.UpdateAsync(SelectedCategory);
+                }
+                else
+                {
+                    var newCategory = new Category { Name = trimmedName };
+                    await _categoryService.AddAsync(newCategory);
+                }
+
+                await LoadCategoriesAsync();
+                CancelEdit();
             }
-
-            int? excludeId = IsEditing ? SelectedCategory?.Id : null;
-            var exists = await _categoryService.ExistsWithNameAsync(trimmedName, excludeId);
-
-            if (exists)
+            catch (Exception ex)
             {
-                ErrorMessage = "A category with this name already exists.";
-                return;
+                ErrorMessage = $"Error saving category: {ex.Message}";
             }
-
-            if (IsEditing && SelectedCategory != null)
-            {
-                SelectedCategory.Name = trimmedName;
-                await _categoryService.UpdateAsync(SelectedCategory);
-            }
-            else
-            {
-                var category = new Category { Name = trimmedName };
-                await _categoryService.AddAsync(category);
-            }
-
-            await LoadCategoriesAsync();
-            CancelEdit();
         }
 
-        private bool CanSave() => !string.IsNullOrWhiteSpace(NewCategoryName);
+        private bool CanSave() => !string.IsNullOrWhiteSpace(NewCategoryName?.Trim());
 
         [RelayCommand]
         private void EditCategory(Category category)
@@ -105,15 +118,20 @@ namespace TheMagicOfPerfumes.ViewModels
         {
             if (CategoryToDelete != null)
             {
-                await _categoryService.DeleteAsync(CategoryToDelete);
-                await LoadCategoriesAsync();
-
-                if (SelectedCategory?.Id == CategoryToDelete.Id)
+                try
                 {
-                    CancelEdit();
+                    await _categoryService.DeleteAsync(CategoryToDelete);
+                    await LoadCategoriesAsync();
+                    if (SelectedCategory?.Id == CategoryToDelete.Id)
+                    {
+                        CancelEdit();
+                    }
+                    CancelDelete();
                 }
-
-                CancelDelete();
+                catch (Exception ex)
+                {
+                    ErrorMessage = $"Error deleting category: {ex.Message}";
+                }
             }
         }
 

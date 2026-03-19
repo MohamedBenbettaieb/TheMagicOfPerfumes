@@ -53,6 +53,9 @@ public partial class ProductViewModel : ViewModelBase
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
+    [ObservableProperty]
+    private string _successMessage = string.Empty;
+
     // --- Computed ---
     public string FormTitle => IsEditing ? "Edit Product" : "Add New Product";
     public string SaveButtonText => IsEditing ? "Update" : "Add Product";
@@ -66,9 +69,17 @@ public partial class ProductViewModel : ViewModelBase
 
     private async Task InitializeAsync()
     {
-        var categories = await _categoryService.GetAllAsync();
-        Categories = new ObservableCollection<Category>(categories);
-        await LoadProductsAsync();
+        try
+        {
+            var categories = await _categoryService.GetAllAsync();
+            Categories = new ObservableCollection<Category>(categories);
+            await LoadProductsAsync();
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to load categories: {ex.Message}";
+        }
     }
 
     private async Task LoadProductsAsync()
@@ -89,7 +100,7 @@ public partial class ProductViewModel : ViewModelBase
 
     partial void OnSelectedFilterCategoryChanged(Category? value) => ApplyFilter();
 
-    partial void OnNewProductNameChanged(string value) => ErrorMessage = string.Empty;
+    partial void OnNewProductNameChanged(string value) { ErrorMessage = string.Empty; SuccessMessage = string.Empty; }
 
     partial void OnIsEditingChanged(bool value)
     {
@@ -133,6 +144,7 @@ public partial class ProductViewModel : ViewModelBase
 
         await LoadProductsAsync();
         CancelEdit();
+        SuccessMessage = IsEditing ? "Product updated successfully." : "Product added successfully.";
     }
 
     private bool CanSave() =>
@@ -173,6 +185,7 @@ public partial class ProductViewModel : ViewModelBase
 
         await _productService.DeleteAsync(product);
         await LoadProductsAsync();
+        SuccessMessage = "Product deleted successfully.";
     }
 
     [RelayCommand]
@@ -191,5 +204,6 @@ public partial class ProductViewModel : ViewModelBase
         NewProductCategory = null;
         IsEditing = false;
         ErrorMessage = string.Empty;
+        SuccessMessage = string.Empty;
     }
 }

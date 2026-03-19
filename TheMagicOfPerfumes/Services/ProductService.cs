@@ -26,6 +26,6 @@ public class ProductService : Repository<Product>, IProductService
 
     public async Task<bool> ExistsWithNameAsync(string name, int? excludeId = null)
     => await _context.Products
-        .AnyAsync(p => p.Name.ToLower() == name.ToLower()
-                    && (!excludeId.HasValue || p.Id != excludeId.Value));
+        .AnyAsync(p => EF.Functions.Collate(p.Name, "NOCASE") == EF.Functions.Collate(name, "NOCASE")
+            && (!excludeId.HasValue || p.Id != excludeId.Value));
 }

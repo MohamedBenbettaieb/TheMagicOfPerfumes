@@ -47,6 +47,12 @@ public partial class App : Application
 
         // --- ViewModels ---
         services.AddTransient<MainViewModel>();
+        services.AddTransient<CategoryViewModel>();
+        services.AddTransient<ProductViewModel>();
+        services.AddTransient<CustomerViewModel>();
+        services.AddTransient<SaleViewModel>();
+        services.AddTransient<CustomerViewModel>();
+        services.AddTransient<DashboardViewModel>();
 
         // --- Views ---
         services.AddTransient<MainWindow>();

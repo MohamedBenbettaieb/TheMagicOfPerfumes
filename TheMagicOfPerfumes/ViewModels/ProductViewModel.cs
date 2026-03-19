@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using TheMagicOfPerfumes.Models;
@@ -8,9 +9,29 @@ using TheMagicOfPerfumes.ViewModels.Base;
 
 namespace TheMagicOfPerfumes.ViewModels;
 
+public interface IProductDialogService
+{
+    MessageBoxResult ShowConfirmation(string message, string caption, MessageBoxButton buttons, MessageBoxImage icon);
+}
+
+internal sealed class MessageBoxProductDialogService : IProductDialogService
+{
+    public MessageBoxResult ShowConfirmation(string message, string caption, MessageBoxButton buttons, MessageBoxImage icon)
+    {
+        return MessageBox.Show(message, caption, buttons, icon);
+    }
+}
+
 public partial class ProductViewModel : ViewModelBase
 {
     private readonly IProductService _productService;
+    private IProductDialogService _dialogService = new MessageBoxProductDialogService();
+
+    internal IProductDialogService DialogService
+    {
+        get => _dialogService;
+        set => _dialogService = value ?? throw new ArgumentNullException(nameof(value));
+    }
     private readonly ICategoryService _categoryService;
 
     // --- Backing list (full, unfiltered) ---
@@ -168,7 +189,7 @@ public partial class ProductViewModel : ViewModelBase
     [RelayCommand]
     private async Task DeleteProductAsync(Product product)
     {
-        var result = MessageBox.Show(
+        var result = _dialogService.ShowConfirmation(
             $"Are you sure you want to delete '{product.Name}'?",
             "Confirm Delete",
             MessageBoxButton.YesNo,

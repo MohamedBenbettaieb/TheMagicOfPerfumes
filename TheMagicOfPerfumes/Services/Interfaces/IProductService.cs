@@ -11,4 +11,6 @@ public interface IProductService
     Task UpdateAsync(Product product);
     Task DeleteAsync(Product product);
     Task<bool> HasSalesHistoryAsync(int productId);
+    Task<bool> ExistsWithNameAsync(string name, int? excludeId = null);
+
 }

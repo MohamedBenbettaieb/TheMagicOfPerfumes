@@ -23,4 +23,9 @@ public class ProductService : Repository<Product>, IProductService
     public async Task<bool> HasSalesHistoryAsync(int productId)
         => await _context.SaleItems
             .AnyAsync(si => si.ProductId == productId);
+
+    public async Task<bool> ExistsWithNameAsync(string name, int? excludeId = null)
+    => await _context.Products
+        .AnyAsync(p => p.Name.ToLower() == name.ToLower()
+                    && (!excludeId.HasValue || p.Id != excludeId.Value));
 }

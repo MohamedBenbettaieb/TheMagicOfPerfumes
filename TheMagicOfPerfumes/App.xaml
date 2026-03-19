@@ -6,5 +6,6 @@
         <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <helpers:BoolToStringConverter x:Key="BoolToStringConverter"/>
         <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <helpers:DecimalInputConverter x:Key="DecimalInputConverter"/>
     </Application.Resources>
 </Application>
